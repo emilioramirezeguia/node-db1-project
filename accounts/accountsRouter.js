@@ -31,4 +31,25 @@ router.post("/", (req, res) => {
     });
 });
 
+// Update (PUT) an account by id
+router.put("/:id", (req, res) => {
+  const postChanges = req.body;
+  const postId = req.params.id;
+
+  db.select("*")
+    .from("accounts")
+    .where({ id: postId })
+    .update(postChanges)
+    .then((count) => {
+      if (count) {
+        res.status(200).json({ message: "Updated successfully." });
+      } else {
+        res.status(400).json({ message: "Account not found." });
+      }
+    })
+    .catch((error) => {
+      res.status(500).json({ error: error.message });
+    });
+});
+
 module.exports = router;
