@@ -40,11 +40,33 @@ router.put("/:id", (req, res) => {
     .from("accounts")
     .where({ id: postId })
     .update(postChanges)
+    .returning(["id", "name", "budget"])
+    .then((count) => {
+      res.status(200).json(count);
+      //   if (count) {
+      //     res.status(200).json({ message: "Updated successfully." });
+      //   } else {
+      //     res.status(400).json({ message: "Account not found." });
+      //   }
+    })
+    .catch((error) => {
+      res.status(500).json({ error: error.message });
+    });
+});
+
+// DELETE an account by id
+router.delete("/:id", (req, res) => {
+  const postId = req.params.id;
+
+  db.select("*")
+    .from("accounts")
+    .where({ id: postId })
+    .del()
     .then((count) => {
       if (count) {
-        res.status(200).json({ message: "Updated successfully." });
+        res.status(200).json({ message: "Removed successfully." });
       } else {
-        res.status(400).json({ message: "Account not found." });
+        res.status(404).json({ message: "Not found." });
       }
     })
     .catch((error) => {
